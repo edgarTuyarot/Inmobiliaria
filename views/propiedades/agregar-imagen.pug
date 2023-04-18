@@ -2,6 +2,8 @@ extends ../layout/admin
 
 block styles
     link(rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css")
+    meta(name="csrf-token" content= csrfToken)
 
 
 block contenido
@@ -16,11 +18,11 @@ block contenido
 
 
         div(class="bg-white shadow py-8 px-4 rounded mx-auto max-w-4xl my-10 md:px-10")
-            form.space-y-8(class="dropzone border-dashed border-2 w-full min:h-96 h-auto rounded flex-col justify-center items-center" method="POST" action="/propiedades/crear")
+            form.space-y-8(id="imagen" class="dropzone border-dashed border-2 w-full min:h-96 h-auto rounded flex-col justify-center items-center" method="POST" action=`/propiedades/agrega-imagen/${propiedad.id}`)
                 input(type="hidden" name="_csrf" value=csrfToken)
                 .space-y-1
 
-                        input(class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold cursor-pointer uppercase" type="submit" value="Publicar Propiedad")
+            button(id="publicar" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold cursor-pointer uppercase mt-5" type="button") Publicar Propiedad
 
 
 block scripts
