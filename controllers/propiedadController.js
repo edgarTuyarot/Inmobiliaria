@@ -89,18 +89,77 @@ const guardar = async (req,res)=>{
     }
 }
 const agregarImagen = async (req,res,next)=>{
+    const {id} = req.params
+
+    //validar que la propidad exista
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad) {
+        return res.redirect('/mis-propiedades')
+    }
+
+    //validar que la propiedad no este publicada
+    if(propiedad.publicado){
+        return res.redirect('/mis-propiedades')
+    }
+
+    //validar que el usuario logeado sea el mismo que publico la propiedad
+    //Validar con toString para evitar que futuros ORM evaluen tambien el tipo de numero como obejto.
+    if(req.usuario.id.toString() != propiedad.usuarioId.toString()){
+        return res.redirect('/mis-propiedades')
+    }
 
 
 
     res.render('propiedades/agregar-imagen',{
-        pagina:"Agrega imagenes a tu anuncio",
+        pagina:`Agrega imagenes para ${propiedad.titulo}`,
+        propiedad,
+        csrfToken: req.csrfToken()
+
+
     })
 }
 
+const guardarImagenes=async (req,res,next) =>{
+    const {id} = req.params
+
+    //validar que la propidad exista
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad) {
+        return res.redirect('/mis-propiedades')
+    }
+
+    //validar que la propiedad no este publicada
+    if(propiedad.publicado){
+        return res.redirect('/mis-propiedades')
+    }
+
+    //validar que el usuario logeado sea el mismo que publico la propiedad
+    //Validar con toString para evitar que futuros ORM evaluen tambien el tipo de numero como obejto.
+    if(req.usuario.id.toString() != propiedad.usuarioId.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+    try {
+        //almacenar imagen y publicar propiedad
+        console.log(req.file)
+        propiedad.imagen = req.file.filename
+        propiedad.publicado = 1
+        await propiedad.save()
+        //el next permite que se puede acceder al siguiente middleware viniendo desde el boton de publicar mediante la funcion en el dropzone
+        next()
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
 
 export{
     admin,
     crear,
     guardar,
-    agregarImagen
+    agregarImagen,
+    guardarImagenes
 }
