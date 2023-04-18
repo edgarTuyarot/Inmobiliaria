@@ -1,0 +1,14 @@
+extends ../layout/admin
+
+
+block contenido
+    div.py-10
+        h1.text-4xl.my-10.font-extrabold.text-center bus
+            span.font-normal Cancha
+        h2.text-center.text-3xl.font-extrabold= pagina
+            if errores
+                div(class="max-w-md mx-auto my-10")
+                    each error in errores
+                        p(class="text-red-500 text-center m-1 mx-auto font-bold bg-or")= error.msg
+
+        a(href="propiedades/crear" class="rounded py-2 px-10 bg-indigo-400 hover:bg-indigo-800 text-sm text-center font-bold text-white uppercase my-5 inline-block w-full md:w-auto") Publicar Anuncio
