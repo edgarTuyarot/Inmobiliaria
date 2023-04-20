@@ -24,4 +24,10 @@ router.get('/propiedades/agrega-imagen/:id',protegerRuta,agregarImagen)
 
 router.post('/propiedades/agrega-imagen/:id',protegerRuta,upload.single('imagen'),guardarImagenes)
 
+router.get('/propiedades/editar/:id',protegerRuta,
+editar
+
+)
+
+
 export default router
