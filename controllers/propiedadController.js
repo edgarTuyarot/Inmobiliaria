@@ -4,9 +4,26 @@ import db from '../config/db.js'
 
 
 
-const admin = (req,res)=>{
+const admin = async (req,res)=>{
+    //del req se estrae el id del usuario logeado
+    const {id}=req.usuario
+    //con el id se realiza la consulta a la base de datos
+    const propiedades =  await Propiedad.findAll({where:
+        {
+        usuarioId : id
+        },
+        include:[
+            {model: Categoria, as: 'categoria'},
+            {model:Precio,as:'precio'}
+
+        ]
+
+
+    })
+
     res.render('propiedades/admin',{
         pagina:"Mis propiedades",
+        propiedades
 
     })
 
@@ -156,10 +173,19 @@ const guardarImagenes=async (req,res,next) =>{
 
 }
 
+const editar = async (req,res)=>{
+
+
+
+}
+
+
+
 export{
     admin,
     crear,
     guardar,
     agregarImagen,
-    guardarImagenes
+    guardarImagenes,
+    editar
 }
