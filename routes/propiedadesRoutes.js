@@ -1,7 +1,7 @@
 import express from 'express'
 import {body} from 'express-validator'
 
-import {admin,crear,guardar,agregarImagen,guardarImagenes} from '../controllers/propiedadController.js'
+import {admin,crear,guardar,agregarImagen,guardarImagenes,editar,guardarCambios} from '../controllers/propiedadController.js'
 import protegerRuta from '../middleware/protegerRuta.js'
 import upload from '../middleware/subirImagen.js'
 
@@ -25,8 +25,18 @@ router.get('/propiedades/agrega-imagen/:id',protegerRuta,agregarImagen)
 router.post('/propiedades/agrega-imagen/:id',protegerRuta,upload.single('imagen'),guardarImagenes)
 
 router.get('/propiedades/editar/:id',protegerRuta,
-editar
+editar)
 
+router.post('/propiedades/crear',protegerRuta,
+    body('titulo').notEmpty().withMessage('El titulo del anuncio es obligatorio'),
+    body('descripcion').notEmpty().isLength({max:200}).withMessage('La descripcion del anuncio es obligatoria'),
+    body('categoria').isNumeric().withMessage('Se debe seleccionar una categoria'),
+    body('precio').isNumeric().withMessage('Se debe seleccionar un precio'),
+    body('habitaciones').isNumeric().withMessage('Selecciona la cantidad de habitaciones'),
+    body('banios').isNumeric().withMessage('Selecciona la cantidad de baños'),
+    body('garage').isNumeric().withMessage('Selecciona la cantidad de garage'),
+    body('calle').notEmpty().withMessage('Se debe ubicar la propiedad en el mapa'),
+    guardarCambios
 )
 
 
