@@ -46,8 +46,6 @@ const crear = async (req,res)=>{
 
 //Funcion para guardar en la base de datos
 const guardar = async (req,res)=>{
-
-
     //validacion de resultado
     let resultado = validationResult(req)
 
@@ -81,7 +79,6 @@ const guardar = async (req,res)=>{
         })
     }
     const {titulo,descripcion,categoria,precio,habitaciones,banios,garage,calle,lat,lng} = req.body
-    console.log(req.usuario)
     try {
         const propiedadGuardada = await Propiedad.create({
             titulo,
@@ -174,11 +171,67 @@ const guardarImagenes=async (req,res,next) =>{
 }
 
 const editar = async (req,res)=>{
+    const {id} = req.params
 
+    //Validar que la propieda exista
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad) {
+        return res.redirect('/mis-propiedades')
+    }
+    //revisar que la propiedad sea del usuario
+    if(propiedad.usuarioId.toString() !== req.usuario.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+    //consultar DB Precio y Categorias
+    const [categorias,precios] = await Promise.all([
+        Categoria.findAll(),
+        Precio.findAll()
+    ])
+    res.render('propiedades/editar',{
+        pagina:`Editar tu anuncio: ${propiedad.titulo}`,
+        csrfToken: req.csrfToken(),
+        precios,
+        categorias,
+        propiedad
+    })
 
 
 }
+const guardarCambios = async (req,res)=>{
+   //validacion de resultado
+    let resultado = validationResult(req)
 
+    if(!resultado.isEmpty()){
+        return res.render('propiedades/editar',{
+            pagina:`Editar tu anuncio: ${propiedad.titulo}`,
+            barra: true,
+            csrfToken: req.csrfToken(),
+            errores:resultado.array(),
+            propiedad:{
+                titulo: req.body.titulo,
+                descripcion: req.body.descripcion,
+                categoria: req.body.categoria,
+                precio: req.body.precio,
+                habitaciones: req.body.habitaciones,
+                banios: req.body.banios,
+                garage: req.body.garage,
+                calle: req.body.calle,
+                lat:req.body.lat,
+                lng:req.body.lng,
+            }
+        })
+    }
+
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad) {
+        return res.redirect('/mis-propiedades')
+    }
+
+
+}
 
 
 export{
@@ -187,5 +240,6 @@ export{
     guardar,
     agregarImagen,
     guardarImagenes,
-    editar
+    editar,
+    guardarCambios
 }
