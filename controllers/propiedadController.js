@@ -1,4 +1,5 @@
 import {validationResult} from 'express-validator'
+import {unlink} from 'node:fs/promises'
 import {Propiedad,Precio,Categoria} from '../models/index.js'
 import db from '../config/db.js'
 
@@ -23,7 +24,8 @@ const admin = async (req,res)=>{
 
     res.render('propiedades/admin',{
         pagina:"Mis propiedades",
-        propiedades
+        propiedades,
+        csrfToken: req.csrfToken()
 
     })
 
@@ -172,7 +174,6 @@ const guardarImagenes=async (req,res,next) =>{
 
 const editar = async (req,res)=>{
     const {id} = req.params
-
     //Validar que la propieda exista
     const propiedad = await Propiedad.findByPk(id)
 
@@ -224,15 +225,63 @@ const guardarCambios = async (req,res)=>{
         })
     }
 
+    //Verificacion de la propiedad en BBDD
+    const {id} = req.params
+    //Validar que la propieda exista
+    const propiedad = await Propiedad.findByPk(id)
+    if(!propiedad) {
+        return res.redirect('/mis-propiedades')
+    }
+    //revisar que la propiedad sea del usuario
+    if(propiedad.usuarioId.toString() !== req.usuario.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+    //rescribir los datos de la propiedad en al base de datos
+    try {
+        const {titulo,descripcion,categoria,precio,habitaciones,banios,garage,calle,lat,lng} = req.body
+        propiedad.set({
+            titulo,
+            descripcion,
+            categoriaId: categoria,
+            precioId:precio,
+            habitaciones,
+            banios,
+            garage,
+            calle,
+            lat,
+            lng
+        })
+        await propiedad.save()
+        res.redirect('/mis-propiedades')
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+const eliminar = async (req,res)=>{
+    const {id} = req.params
+    //Validar que la propieda exista
     const propiedad = await Propiedad.findByPk(id)
 
     if(!propiedad) {
         return res.redirect('/mis-propiedades')
     }
+    //revisar que la propiedad sea del usuario
+    if(propiedad.usuarioId.toString() !== req.usuario.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+    //eliminar la imagen asociada
+    await unlink(`public/uploads/${propiedad.imagen}`)
+    
+    //eliminar de la bd la imagen
+    await propiedad.destroy()
+    res.redirect('/mis-propiedades')
+
 
 
 }
-
 
 export{
     admin,
@@ -241,5 +290,6 @@ export{
     agregarImagen,
     guardarImagenes,
     editar,
-    guardarCambios
+    guardarCambios,
+    eliminar
 }
