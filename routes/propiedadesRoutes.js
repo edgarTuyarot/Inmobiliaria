@@ -1,7 +1,7 @@
 import express from 'express'
 import {body} from 'express-validator'
 
-import {admin,crear,guardar,agregarImagen,guardarImagenes,editar,guardarCambios} from '../controllers/propiedadController.js'
+import {admin,crear,guardar,agregarImagen,guardarImagenes,editar,guardarCambios,eliminar} from '../controllers/propiedadController.js'
 import protegerRuta from '../middleware/protegerRuta.js'
 import upload from '../middleware/subirImagen.js'
 
@@ -27,7 +27,7 @@ router.post('/propiedades/agrega-imagen/:id',protegerRuta,upload.single('imagen'
 router.get('/propiedades/editar/:id',protegerRuta,
 editar)
 
-router.post('/propiedades/crear',protegerRuta,
+router.post('/propiedades/editar/:id',protegerRuta,
     body('titulo').notEmpty().withMessage('El titulo del anuncio es obligatorio'),
     body('descripcion').notEmpty().isLength({max:200}).withMessage('La descripcion del anuncio es obligatoria'),
     body('categoria').isNumeric().withMessage('Se debe seleccionar una categoria'),
@@ -38,6 +38,8 @@ router.post('/propiedades/crear',protegerRuta,
     body('calle').notEmpty().withMessage('Se debe ubicar la propiedad en el mapa'),
     guardarCambios
 )
+
+router.post('/propiedades/eliminar/:id',protegerRuta,eliminar)
 
 
 export default router
