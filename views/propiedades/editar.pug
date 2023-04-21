@@ -15,7 +15,7 @@ block contenido
                     p(class="text-red-500 text-center m-1 mx-auto font-bold bg-or")= error.msg
 
         div(class="bg-white shadow py-8 px-4 rounded mx-auto max-w-4xl my-10 md:px-10")
-            form.space-y-8(method="POST" action="/propiedades/crear")
+            form.space-y-8(method="POST" )
                 input(type="hidden" name="_csrf" value=csrfToken)
                 .space-y-1
                     h3.text-lg.leading-6.font-medium.text-gray-900 Informacion General
@@ -33,13 +33,13 @@ block contenido
                                 select#categoria.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeolder-gray-400(name="categoria")
                                     option() -Seleccione-
                                     each categoria in categorias
-                                        option(value=categoria.id selected= propiedad.categoria ? propiedad.categoria == categoria.id ? true : false : null )= categoria.nombre
+                                        option(value=categoria.id selected= propiedad.categoriaId ? propiedad.categoriaId == categoria.id ? true : false : null )= categoria.nombre
                             div(class="md:w-1/2")
                                 label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="precio") Precio
                                 select#precio.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeolder-gray-400(name="precio")
                                     option(value="") -Seleccione-
                                     each precio in precios
-                                        option(value=precio.id selected= propiedad.precio ? propiedad.precio == precio.id ? true : false : null )= precio.nombre
+                                        option(value=precio.id selected= propiedad.precioId ? propiedad.precioId == precio.id ? true : false : null )= precio.nombre
                         div(class="md:flex md:gap-4 space-y-8 md:space-y-0")
 
                             div(class="md:w-1/3")
@@ -74,7 +74,7 @@ block contenido
                             input(type="hidden" name="calle" id="calle" value= propiedad.calle? propiedad.calle:'')
                             input(type="hidden" name="lat" id="lat" value= propiedad.lat? propiedad.lat:'')
                             input(type="hidden" name="lng" id="lng" value= propiedad.lng? propiedad.lng:'')
-                        input(class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold cursor-pointer uppercase" type="submit" value="Anadir Imagen")
+                        input(class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold cursor-pointer uppercase" type="submit" value="Guardar Cambios")
 
 block scripts
     script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js")
