@@ -274,13 +274,33 @@ const eliminar = async (req,res)=>{
     }
     //eliminar la imagen asociada
     await unlink(`public/uploads/${propiedad.imagen}`)
-    
+
     //eliminar de la bd la imagen
     await propiedad.destroy()
     res.redirect('/mis-propiedades')
+}
 
 
+//Muestra una propiedad
+const mostrarPropiedad = async (req,res)=>{
+    //Validar que la propieda exista
+    const {id} = req.params
+    const propiedad = await Propiedad.findByPk(id,{
+        include:[
+            {model: Categoria, as: 'categoria'},
+            {model:Precio,as:'precio'}
 
+        ]
+    })
+
+    if(!propiedad){
+        return res.redirect('/404')
+    }
+
+    res.render('propiedades/mostrar',{
+        pagina: propiedad.titulo,
+        propiedad
+    })
 }
 
 export{
@@ -291,5 +311,6 @@ export{
     guardarImagenes,
     editar,
     guardarCambios,
-    eliminar
+    eliminar,
+    mostrarPropiedad
 }
