@@ -1,14 +1,16 @@
 import express from 'express'
 import {body} from 'express-validator'
 
-import {admin,crear,guardar,agregarImagen,guardarImagenes,editar,guardarCambios,eliminar} from '../controllers/propiedadController.js'
+import {admin,crear,guardar,agregarImagen,guardarImagenes,editar,guardarCambios,eliminar,mostrarPropiedad} from '../controllers/propiedadController.js'
 import protegerRuta from '../middleware/protegerRuta.js'
 import upload from '../middleware/subirImagen.js'
 
 const router = express.Router()
 
 router.get('/mis-propiedades',protegerRuta,admin)
+
 router.get('/propiedades/crear',protegerRuta,crear)
+
 router.post('/propiedades/crear',protegerRuta,
     body('titulo').notEmpty().withMessage('El titulo del anuncio es obligatorio'),
     body('descripcion').notEmpty().isLength({max:200}).withMessage('La descripcion del anuncio es obligatoria'),
@@ -36,10 +38,12 @@ router.post('/propiedades/editar/:id',protegerRuta,
     body('banios').isNumeric().withMessage('Selecciona la cantidad de baños'),
     body('garage').isNumeric().withMessage('Selecciona la cantidad de garage'),
     body('calle').notEmpty().withMessage('Se debe ubicar la propiedad en el mapa'),
-    guardarCambios
-)
+    guardarCambios)
 
 router.post('/propiedades/eliminar/:id',protegerRuta,eliminar)
 
+//Arega Publica
+
+router.get('/propiedad/:id',mostrarPropiedad)
 
 export default router
